@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -20,28 +20,28 @@
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
 ******************************************************************************/
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 import android.content.Context;
 import android.content.Intent;
 
-public class MWMResponse
+public class OMResponse
 {
-  private MWMPoint mPoint;
+  private OMPoint mPoint;
   private double   mZoomLevel;
 
   /**
    *
-   * @return point, for which user requested more information in MapsWithMe application.
+   * @return point, for which user requested more information in Organic Maps application.
    */
-  public MWMPoint getPoint()     { return mPoint; }
+  public OMPoint getPoint()     { return mPoint; }
   public boolean  hasPoint()     { return mPoint != null; }
   public double   getZoomLevel() { return mZoomLevel; }
 
   @Override
   public String toString()
   {
-    return "MWMResponse [SelectedPoint=" + mPoint + "]";
+    return "OMResponse [SelectedPoint=" + mPoint + "]";
   }
 
   /**
@@ -51,20 +51,20 @@ public class MWMResponse
    * @param intent
    * @return
    */
-  public static MWMResponse extractFromIntent(Context context, Intent intent)
+  public static OMResponse extractFromIntent(Context context, Intent intent)
   {
-    final MWMResponse response = new MWMResponse();
+    final OMResponse response = new OMResponse();
     // parse point
-    final double lat = intent.getDoubleExtra(Const.EXTRA_MWM_RESPONSE_POINT_LAT, INVALID_LL);
-    final double lon = intent.getDoubleExtra(Const.EXTRA_MWM_RESPONSE_POINT_LON, INVALID_LL);
-    final String name = intent.getStringExtra(Const.EXTRA_MWM_RESPONSE_POINT_NAME);
-    final String id = intent.getStringExtra(Const.EXTRA_MWM_RESPONSE_POINT_ID);
+    final double lat = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_POINT_LAT, INVALID_LL);
+    final double lon = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_POINT_LON, INVALID_LL);
+    final String name = intent.getStringExtra(Const.EXTRA_OM_RESPONSE_POINT_NAME);
+    final String id = intent.getStringExtra(Const.EXTRA_OM_RESPONSE_POINT_ID);
 
     // parse additional info
-    response.mZoomLevel = intent.getDoubleExtra(Const.EXTRA_MWM_RESPONSE_ZOOM, 9);
+    response.mZoomLevel = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_ZOOM, 9);
 
     if (lat != INVALID_LL && lon != INVALID_LL)
-      response.mPoint = new MWMPoint(lat, lon, name, id);
+      response.mPoint = new OMPoint(lat, lon, name, id);
     else
       response.mPoint = null;
 
@@ -73,5 +73,5 @@ public class MWMResponse
 
   private final static double INVALID_LL =  Double.MIN_VALUE;
 
-  private MWMResponse() {}
+  private OMResponse() {}
 }

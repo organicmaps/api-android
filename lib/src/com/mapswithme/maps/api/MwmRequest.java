@@ -1,4 +1,4 @@
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,7 +16,7 @@ public class MwmRequest
 {
 
   // **
-  private List<MWMPoint> mPoints    = new ArrayList<MWMPoint>();
+  private List<OMPoint> mPoints    = new ArrayList<OMPoint>();
   private PendingIntent  mPendingIntent;
   private String         mTitle;
   private double         mZoomLevel = 1;
@@ -43,7 +43,7 @@ public class MwmRequest
     return this;
   }
 
-  public MwmRequest addPoint(MWMPoint point)
+  public MwmRequest addPoint(OMPoint point)
   {
     mPoints.add(point);
     return this;
@@ -51,12 +51,12 @@ public class MwmRequest
 
   public MwmRequest addPoint(double lat, double lon, String name, String id)
   {
-    return addPoint(new MWMPoint(lat, lon, name, id));
+    return addPoint(new OMPoint(lat, lon, name, id));
   }
 
-  public MwmRequest setPoints(Collection<MWMPoint> points)
+  public MwmRequest setPoints(Collection<OMPoint> points)
   {
-    mPoints = new ArrayList<MWMPoint>(points);
+    mPoints = new ArrayList<OMPoint>(points);
     return this;
   }
 
@@ -80,7 +80,7 @@ public class MwmRequest
 
   public Intent toIntent(Context context)
   {
-    final Intent mwmIntent = new Intent(Const.ACTION_MWM_REQUEST);
+    final Intent mwmIntent = new Intent(Const.ACTION_OM_REQUEST);
 
     // url
     final String mwmUrl = createMwmUrl(context, mTitle, mZoomLevel, mPoints).toString();
@@ -109,14 +109,14 @@ public class MwmRequest
    * This method is internal only.
    * Used for compatibility.
    */
-  MwmRequest setPoints(MWMPoint[] points)
+  MwmRequest setPoints(OMPoint[] points)
   {
     return setPoints(Arrays.asList(points));
   }
 
-  // Below are utilities from MapsWithMeApi because we are not "Feature Envy"
+  // Below are utilities from OrganicMapsApi because we are not "Feature Envy"
 
-  private static StringBuilder createMwmUrl(Context context, String title, double zoomLevel, List<MWMPoint> points)
+  private static StringBuilder createMwmUrl(Context context, String title, double zoomLevel, List<OMPoint> points)
   {
     final StringBuilder urlBuilder = new StringBuilder("mapswithme://map?");
     // version
@@ -129,7 +129,7 @@ public class MwmRequest
     appendIfNotNull(urlBuilder, "z", isValidZoomLevel(zoomLevel) ? String.valueOf(zoomLevel) : null);
 
     // points
-    for (final MWMPoint point : points)
+    for (final OMPoint point : points)
     {
       if (point != null)
       {
@@ -168,7 +168,7 @@ public class MwmRequest
 
   private static boolean isValidZoomLevel(double zoom)
   {
-    return zoom >= MapsWithMeApi.ZOOM_MIN && zoom <= MapsWithMeApi.ZOOM_MAX;
+    return zoom >= OrganicMapsApi.ZOOM_MIN && zoom <= OrganicMapsApi.ZOOM_MAX;
   }
 
 }

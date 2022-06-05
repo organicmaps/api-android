@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -20,7 +20,7 @@
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
  ******************************************************************************/
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 import android.app.Activity;
 import android.app.PendingIntent;
@@ -30,7 +30,7 @@ import android.content.pm.ActivityInfo;
 import android.net.Uri;
 
 
-public final class MapsWithMeApi
+public final class OrganicMapsApi
 {
 
   /**
@@ -43,7 +43,7 @@ public final class MapsWithMeApi
   public static final double ZOOM_MIN = 1;
 
 
-  public static void showMapsWithMeUrl(Activity caller, PendingIntent pendingIntent, double zoomLevel, String url)
+  public static void showOrganicMapsUrl(Activity caller, PendingIntent pendingIntent, double zoomLevel, String url)
   {
     final Uri uri = Uri.parse(url);
     final String latlon[] = uri.getQueryParameter("ll").split(",");
@@ -52,14 +52,14 @@ public final class MapsWithMeApi
     final String name = uri.getQueryParameter("n");
     final String id = uri.getQueryParameter("id");
 
-    showPointsOnMap(caller, name, zoomLevel, pendingIntent, new MWMPoint(lat, lon, name, id));
+    showPointsOnMap(caller, name, zoomLevel, pendingIntent, new OMPoint(lat, lon, name, id));
   }
 
   public static void sendRequest(Activity caller, MwmRequest request)
   {
     final Intent mwmIntent = request.toIntent(caller);
 
-    if (isMapsWithMeInstalled(caller))
+    if (isOrganicMapsInstalled(caller))
     {
       // Match activity for intent
       final ActivityInfo aInfo = caller.getPackageManager().resolveActivity(mwmIntent, 0).activityInfo;
@@ -67,7 +67,7 @@ public final class MapsWithMeApi
       caller.startActivity(mwmIntent);
     }
     else
-      (new DownloadMapsWithMeDialog(caller)).show();
+      (new DownloadOrganicMapsDialog(caller)).show();
   }
 
   /**
@@ -80,12 +80,12 @@ public final class MapsWithMeApi
    */
   public static void showPointOnMap(Activity caller, double lat, double lon, String name)
   {
-    showPointsOnMap(caller, (String) null, (PendingIntent) null, new MWMPoint(lat, lon, name));
+    showPointsOnMap(caller, (String) null, (PendingIntent) null, new OMPoint(lat, lon, name));
   }
 
   /**
    * Shows single point on the map using specified zoom level in range from
-   * {@link MapsWithMeApi#ZOOM_MIN} to {@link MapsWithMeApi#ZOOM_MAX}.
+   * {@link OrganicMapsApi#ZOOM_MIN} to {@link OrganicMapsApi#ZOOM_MAX}.
    *
    * @param caller
    * @param lat
@@ -95,7 +95,7 @@ public final class MapsWithMeApi
    */
   public static void showPointOnMap(Activity caller, double lat, double lon, String name, double zoomLevel)
   {
-    showPointsOnMap(caller, (String) null, zoomLevel, (PendingIntent) null, new MWMPoint(lat, lon, name));
+    showPointsOnMap(caller, (String) null, zoomLevel, (PendingIntent) null, new OMPoint(lat, lon, name));
   }
 
   /**
@@ -105,13 +105,13 @@ public final class MapsWithMeApi
    * @param title
    * @param points
    */
-  public static void showPointsOnMap(Activity caller, String title, MWMPoint... points)
+  public static void showPointsOnMap(Activity caller, String title, OMPoint... points)
   {
     showPointsOnMap(caller, title, null, points);
   }
 
   /**
-   * Shows set of points on the maps and allows MapsWithMeApplication to send
+   * Shows set of points on the maps and allows OrganicMapsApplication to send
    * {@link PendingIntent} provided by client application.
    *
    * @param caller
@@ -119,13 +119,13 @@ public final class MapsWithMeApi
    * @param pendingIntent
    * @param points
    */
-  public static void showPointsOnMap(Activity caller, String title, PendingIntent pendingIntent, MWMPoint... points)
+  public static void showPointsOnMap(Activity caller, String title, PendingIntent pendingIntent, OMPoint... points)
   {
     showPointsOnMap(caller, title, -1, pendingIntent, points);
   }
 
   private static void showPointsOnMap(Activity caller, String title, double zoomLevel, PendingIntent pendingIntent,
-      MWMPoint... points)
+      OMPoint... points)
   {
     final MwmRequest request = new MwmRequest()
                                     .setTitle(title)
@@ -145,15 +145,15 @@ public final class MapsWithMeApi
   }
 
   /**
-   * Detects if any version (Lite, Pro) of MapsWithMe, which supports API calls
+   * Detects if any version (Lite, Pro) of Organic Maps, which supports API calls
    * are installed on the device.
    *
    * @param context
    * @return
    */
-  public static boolean isMapsWithMeInstalled(Context context)
+  public static boolean isOrganicMapsInstalled(Context context)
   {
-    final Intent intent = new Intent(Const.ACTION_MWM_REQUEST);
+    final Intent intent = new Intent(Const.ACTION_OM_REQUEST);
     return context.getPackageManager().resolveActivity(intent, 0) != null;
   }
 }

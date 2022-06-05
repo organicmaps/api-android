@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -20,13 +20,13 @@
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
 ******************************************************************************/
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 public class Const
 {
 
   /* Request extras */
-  static final String AUTHORITY = "com.mapswithme.maps.api";
+  static final String AUTHORITY = "app.organicmaps.api";
   public static final String EXTRA_URL = AUTHORITY +  ".url";
   public static final String EXTRA_TITLE = AUTHORITY + ".title";
   public static final String EXTRA_API_VERSION = AUTHORITY + ".version";
@@ -40,14 +40,14 @@ public class Const
 
   /* Response extras */
   /* Point part-by-part*/
-  public static final String EXTRA_MWM_RESPONSE_POINT_NAME = AUTHORITY + ".point_name";
-  public static final String EXTRA_MWM_RESPONSE_POINT_LAT = AUTHORITY + ".point_lat";
-  public static final String EXTRA_MWM_RESPONSE_POINT_LON = AUTHORITY + ".point_lon";
-  public static final String EXTRA_MWM_RESPONSE_POINT_ID = AUTHORITY + ".point_id";
-  public static final String EXTRA_MWM_RESPONSE_ZOOM = AUTHORITY + ".zoom_level";
+  public static final String EXTRA_OM_RESPONSE_POINT_NAME = AUTHORITY + ".point_name";
+  public static final String EXTRA_OM_RESPONSE_POINT_LAT = AUTHORITY + ".point_lat";
+  public static final String EXTRA_OM_RESPONSE_POINT_LON = AUTHORITY + ".point_lon";
+  public static final String EXTRA_OM_RESPONSE_POINT_ID = AUTHORITY + ".point_id";
+  public static final String EXTRA_OM_RESPONSE_ZOOM = AUTHORITY + ".zoom_level";
 
 
-  public static final String ACTION_MWM_REQUEST = AUTHORITY + ".request";
+  public static final String ACTION_OM_REQUEST = AUTHORITY + ".request";
   static final int API_VERSION = 2;
   static final String CALLBACK_PREFIX = "mapswithme.client.";
 

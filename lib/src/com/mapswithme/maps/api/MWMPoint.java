@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -20,7 +20,7 @@
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
 ******************************************************************************/
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 import java.io.Serializable;
 
@@ -29,7 +29,7 @@ import java.io.Serializable;
  * Has its <code>equals()</code> and <code>hashCode()</code> methods overloaded
  * so could be used in Hash(Map/Set/etc) classes.
  */
-public final class MWMPoint implements Serializable
+public final class OMPoint implements Serializable
 {
   private static final long serialVersionUID = 1L;
 
@@ -39,12 +39,12 @@ public final class MWMPoint implements Serializable
   private String mId;
   private Style mStyle;
 
-  public MWMPoint(double lat, double lon, String name)
+  public OMPoint(double lat, double lon, String name)
   {
     this(lat, lon, name, null);
   }
 
-  public MWMPoint(double lat, double lon, String name, String id)
+  public OMPoint(double lat, double lon, String name, String id)
   {
     this.mLat = lat;
     this.mLon = lon;
@@ -52,7 +52,7 @@ public final class MWMPoint implements Serializable
     this.mId = id;
   }
 
-  public MWMPoint(double lat, double lon, String name, String id, Style style)
+  public OMPoint(double lat, double lon, String name, String id, Style style)
   {
     this.mLat = lat;
     this.mLon = lon;
@@ -89,7 +89,7 @@ public final class MWMPoint implements Serializable
   @Override
   public String toString()
   {
-    return "MWMPoint [lat=" + mLat +
+    return "OMPoint [lat=" + mLat +
             ", lon=" + mLon +
             ", name=" + mName +
             ", id=" + mId +
@@ -123,7 +123,7 @@ public final class MWMPoint implements Serializable
       return false;
     if (getClass() != obj.getClass())
       return false;
-    final MWMPoint other = (MWMPoint) obj;
+    final OMPoint other = (OMPoint) obj;
     if (Double.doubleToLongBits(mLat) != Double.doubleToLongBits(other.mLat))
       return false;
     if (Double.doubleToLongBits(mLon) != Double.doubleToLongBits(other.mLon))
@@ -133,7 +133,7 @@ public final class MWMPoint implements Serializable
   }
 
   /**
-   * Supported styles for MAPS.ME. Each appears as a small flag of the appropriate colour.
+   * Supported styles for Organic Maps. Each appears as a small flag of the appropriate colour.
    */
   public enum Style
   {
@@ -145,6 +145,15 @@ public final class MWMPoint implements Serializable
     PlacemarkBrown("placemark-brown"),
     PlacemarkGreen("placemark-green"),
     PlacemarkOrange("placemark-orange");
+    // TODO: Add
+    // placemark-bluegray
+    // placemark-cyan
+    // placemark-deeporange
+    // placemark-deeppurple
+    // placemark-gray
+    // placemark-lightblue
+    // placemark-lime
+    // placemark-teal
 
     private String name;
 
