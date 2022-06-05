@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -31,12 +31,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import com.mapswithme.maps.api.MWMResponse;
-import com.mapswithme.maps.api.MapsWithMeApi;
+import app.organicmaps.api.OMResponse;
+import app.organicmaps.api.OrganicMapsApi;
 
 public class CityDetailsActivity extends Activity
 {
-  public static String EXTRA_FROM_MWM = "from-maps-with-me";
+  public static String EXTRA_FROM_OM = "from-maps-with-me";
 
   private TextView mName;
   private TextView mAltNames;
@@ -54,7 +54,7 @@ public class CityDetailsActivity extends Activity
   public static PendingIntent getPendingIntent(Context context)
   {
     final Intent i = new Intent(context, CityDetailsActivity.class);
-    i.putExtra(EXTRA_FROM_MWM, true);
+    i.putExtra(EXTRA_FROM_OM, true);
     return PendingIntent.getActivity(context, 0, i, 0);
   }
 
@@ -80,9 +80,9 @@ public class CityDetailsActivity extends Activity
       @Override
       public void onClick(View v)
       {
-        MapsWithMeApi
+        OrganicMapsApi
           .showPointsOnMap(CityDetailsActivity.this,mCity.getName(),
-                           CityDetailsActivity.getPendingIntent(CityDetailsActivity.this),mCity.toMWMPoint());
+                           CityDetailsActivity.getPendingIntent(CityDetailsActivity.this),mCity.toOMPoint());
       }
     });
 
@@ -98,10 +98,10 @@ public class CityDetailsActivity extends Activity
 
   private void handleIntent(Intent intent)
   {
-    if (intent.getBooleanExtra(EXTRA_FROM_MWM, false))
+    if (intent.getBooleanExtra(EXTRA_FROM_OM, false))
     {
-      final MWMResponse response = MWMResponse.extractFromIntent(this, intent);
-      mCity = City.fromMWMPoint(response.getPoint());
+      final OMResponse response = OMResponse.extractFromIntent(this, intent);
+      mCity = City.fromOMPoint(response.getPoint());
 
       if (mCity != null)
       {

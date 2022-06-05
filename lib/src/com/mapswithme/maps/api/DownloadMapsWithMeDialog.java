@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -20,7 +20,7 @@
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
 ******************************************************************************/
-package com.mapswithme.maps.api;
+package app.organicmaps.api;
 
 import android.app.Activity;
 import android.app.Dialog;
@@ -29,12 +29,12 @@ import android.net.Uri;
 import android.view.View;
 import android.view.Window;
 
-import com.mapwithme.maps.api.R;
+import app.organicmaps.api.R;
 
-public class DownloadMapsWithMeDialog extends Dialog implements android.view.View.OnClickListener
+public class DownloadOrganicMapsDialog extends Dialog implements android.view.View.OnClickListener
 {
 
-  public DownloadMapsWithMeDialog(Activity activity)
+  public DownloadOrganicMapsDialog(Activity activity)
   {
     super(activity);
 
@@ -58,7 +58,7 @@ public class DownloadMapsWithMeDialog extends Dialog implements android.view.Vie
   @Override
   public void onClick(View v)
   {
-    String url = getContext().getString(R.string.url_pro);
+    String url = getContext().getString(R.string.url);
     onDownloadButtonClicked(url);
   }
 }

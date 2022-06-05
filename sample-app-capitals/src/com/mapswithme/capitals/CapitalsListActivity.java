@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -32,8 +32,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.mapswithme.maps.api.MWMPoint;
-import com.mapswithme.maps.api.MapsWithMeApi;
+import app.organicmaps.api.OMPoint;
+import app.organicmaps.api.OrganicMapsApi;
 
 public class CapitalsListActivity extends ListActivity
 {
@@ -51,7 +51,7 @@ public class CapitalsListActivity extends ListActivity
     findViewById(R.id.btn_all).setOnClickListener(new OnClickListener()
     {
       @Override
-      public void onClick(View v) { showCityOnMWMMap(City.CAPITALS); }
+      public void onClick(View v) { showCityOnOMMap(City.CAPITALS); }
     });
   }
 
@@ -59,17 +59,17 @@ public class CapitalsListActivity extends ListActivity
   @Override
   protected void onListItemClick(ListView l, View v, int position, long id)
   {
-    showCityOnMWMMap(mCityAdapter.getItem(position));
+    showCityOnOMMap(mCityAdapter.getItem(position));
   }
 
-  private void showCityOnMWMMap(City ... cities)
+  private void showCityOnOMMap(City ... cities)
   {
-    MWMPoint[] points = new MWMPoint[cities.length];
+    OMPoint[] points = new OMPoint[cities.length];
     for (int i = 0; i < cities.length; i++)
-      points[i] = cities[i].toMWMPoint();
+      points[i] = cities[i].toOMPoint();
 
     final String title = cities.length == 1 ? cities[0].getName() : "Capitals of the World";
-    MapsWithMeApi.showPointsOnMap(this, title, CityDetailsActivity.getPendingIntent(this), points);
+    OrganicMapsApi.showPointsOnMap(this, title, CityDetailsActivity.getPendingIntent(this), points);
   }
 
   private static class CityAdapter extends ArrayAdapter<City>

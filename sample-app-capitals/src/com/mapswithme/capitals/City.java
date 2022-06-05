@@ -1,5 +1,5 @@
 /******************************************************************************
-   Copyright (c) 2013, MapsWithMe GmbH All rights reserved.
+   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
   are permitted provided that the following conditions are met:
@@ -22,7 +22,7 @@
 ******************************************************************************/
 package com.mapswithme.capitals;
 
-import com.mapswithme.maps.api.MWMPoint;
+import app.organicmaps.api.OMPoint;
 
 import java.util.Arrays;
 import java.util.Comparator;
@@ -56,7 +56,7 @@ public class City
 
   @Override
   public String toString()     { return name; }
-  public MWMPoint toMWMPoint() { return new MWMPoint(lat, lon, name, id); }
+  public OMPoint toOMPoint() { return new OMPoint(lat, lon, name, id); }
 
   public String getId()          { return id; }
   public String getName()        { return name; }
@@ -69,7 +69,7 @@ public class City
   public String getAltNames()    { return altNames; }
 
 
-  public static City fromMWMPoint(MWMPoint point)
+  public static City fromOMPoint(OMPoint point)
   {
     City result = null;
     final String id = point.getId();
