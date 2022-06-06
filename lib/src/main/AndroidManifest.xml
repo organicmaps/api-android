@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest package="app.organicmaps.api"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  <queries>
+    <package android:name="app.organicmaps"/>
+    <package android:name="com.mapswithme.maps"/>
+  </queries>
+</manifest>

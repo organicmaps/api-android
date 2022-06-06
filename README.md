@@ -25,14 +25,14 @@ Organic Maps works from *Android SDK version 21 (Android 5)* and above
 First step is to clone [repository][linkRepo] or download it as an archive.
 
 When your are done you find two folders: *lib* and *sample-app-capitals*. First one is a library project that you should add to your project.
-You don't need any additional permissions in your AndroidManifest.xml to use API library, so you can write real code straight away, calling for different `OrganicMapsApi` methods (more details below).
+You don't need any additional permissions in your AndroidManifest.xml to use API library, so you can write real code straight away, calling for different `Api` methods (more details below).
 
 ## Classes Overview and HOW TO
 Core classes you will work with are:
 
-* [app.organicmaps.api.OrganicMapsApi][linkApiClass] - static class with methods such as `showPointOnMap(Activity, double, double, String)` etc.
-* [app.organicmaps.api.OMPoint][linkPointClass] - model of POI, includes lat, lon, name, id, and style data.
-* [app.organicmaps.api.OMResponse][linkRespClass] - helps you to extract response from Organic Maps by applying `OMResponse.extractFromIntent(Intent)` to Intent. Contains OMPoint data.
+* [app.organicmaps.api.Api][linkApiClass] - static class with methods such as `showPointOnMap(Activity, double, double, String)` etc.
+* [app.organicmaps.api.Point][linkPointClass] - model of POI, includes lat, lon, name, id, and style data.
+* [app.organicmaps.api.Response][linkRespClass] - helps you to extract response from Organic Maps by applying `Response.extractFromIntent(Intent)` to Intent. Contains Point data.
 
 ### Show Points on the Map
 
@@ -48,25 +48,25 @@ The simplest usage:
         final double lon = ...;
         final String name = ...;
         // Ask Organic Maps to show the point
-        OrganicMapsApi.showPointOnMap(this, lat, lon, name);
+        Api.showPointOnMap(this, lat, lon, name);
       }
     ...
 
     }
 
-For multiple points use [OMPoint][linkPointClass] class:
+For multiple points use [Point][linkPointClass] class:
 
     void showMultiplePoints(List<SomeDomainObject> list)
     {
-      // Convert objects to MMWPoints
-      final OMPoint[] points = new OMPoint[list.length];
+      // Convert objects to OM Points
+      final Point[] points = new Point[list.length];
       for (int i = 0; i < list.size; i++)
       {
-        // Get lat, lon, and name from object and assign it to new MMWPoint
-        points[i] = new OMPoint(lat, lon, name);
+        // Get lat, lon, and name from object and assign it to new Point
+        points[i] = new Point(lat, lon, name);
       }
       // Show all point on the map, you could also provide some title
-      OrganicMapsApi.showPointsOnMap(this, "Look at my points, my points are amazing!", points);
+      Api.showPointsOnMap(this, "Look at my points, my points are amazing!", points);
     }
 
 
@@ -80,18 +80,18 @@ your application when user press "More Info" button :
     // Here is how to pass points with ID ant PendingIntent
     void showMultiplePointsWithPendingIntent(List<SomeDomainObject> list, PendingIntent pendingIntent)
     {
-      // Convert objects to OMPoints
-      final OMPoint[] points = new OMPoint[list.length];
+      // Convert objects to Points
+      final Point[] points = new Point[list.length];
       for (int i = 0; i < list.size; i++)
       {
         //                                      ||
         //                                      ||
         //                                      \/
         //         Now you should specify string ID for each point
-        points[i] = new OMPoint(lat, lon, name, id);
+        points[i] = new Point(lat, lon, name, id);
       }
       // Show all points on the map, you could also provide some title
-      OrganicMapsApi.showPointsOnMap(this, "This title says that user should choose some point", pendingIntent, points);
+      Api.showPointsOnMap(this, "This title says that user should choose some point", pendingIntent, points);
     }
 
     //Code below shows general way to extract response data
@@ -100,7 +100,7 @@ your application when user press "More Info" button :
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         // Handle intent you specified with PandingIntent
-        // Now it has additional information (OMPoint).
+        // Now it has additional information (Point).
         handleIntent(getIntent());
     }
 
@@ -114,10 +114,10 @@ your application when user press "More Info" button :
 
     void handleIntent(Intent intent)
     {
-      // Apply OMResponse extraction method to intent
-      final OMResponse mwmResponse = OMResponse.extractFromIntent(this, intent);
+      // Apply Response extraction method to intent
+      final Response mwmResponse = Response.extractFromIntent(this, intent);
       // Here is your point that user selected
-      final OMPoint point = mwmResponse.getPoint();
+      final Point point = mwmResponse.getPoint();
       // Now, for instance you can do some work depending on point id
       processUserInteraction(point.getId());
     }
@@ -125,24 +125,26 @@ your application when user press "More Info" button :
 ## FAQ
 
 #### How should I detect if user has Organic Maps installed?
-`OrganicMapsApi.isOrganicMapsInstalled(Context)` will return `true` if user has *Lite* or *Pro* version that supports API call installed.
+`Api.isOrganicMapsInstalled(Context)` will return `true` if user has *Lite* or *Pro* version that supports API call installed.
 
 #### Which versions of Organic Maps support API calls?
 All versions since 2.4.0 and above support API calls.
 
-#### What will happen if I call for `OrganicMapsApi.showPoint()` but Organic Maps application is not installed?
+#### What will happen if I call for `Api.showPoint()` but Organic Maps application is not installed?
 Nothing serious. API library will show simple dialog with gentle offer to download Organic Maps. You can see how it looks like below.
 
 ![Please install us](site/images/dlg.png)
 
 ## Sample Code and Application
 
-* [Sample Application at Google Play][linkSampleGooglePlay]
 * [Sample Application Source Code][linkSampleSource]
 
 -------------------------------------------------------------------------------
 ## API Code License
+
+Copyright (c) 2022, Organic Maps OÜ.
 Copyright (c) 2019, MY.COM B.V.
+Copyright (c) 2013, MapsWithMe GmbH.
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
@@ -154,12 +156,10 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 
 [linkOM]: https://organicmaps.app/ "Organic Maps"
 [linkPIntent]: http://developer.android.com/reference/android/app/PendingIntent.html "PendingIntent"
-[linkRepo]: https://github.com/mapswithme/api-android "GitHub Repository"
+[linkRepo]: https://github.com/organicmaps/api-android "GitHub Repository"
 [linkLibProj]: http://developer.android.com/tools/projects/index.html#LibraryProjects "Android Library Project"
 [linkIntents]: http://developer.android.com/guide/components/intents-filters.html "Intents and Intent Filters"
-[linkApiClass]: lib/src/com/mapswithme/maps/api/OrganicMapsApi.java "OrganicMapsApi.java"
-[linkPointClass]: lib/src/com/mapswithme/maps/api/OMPoint.java "OMPoint.java"
-[linkRespClass]: lib/src/com/mapswithme/maps/api/OMResponse.java  "OMResponse.java"
-[linkSampleSource]: https://github.com/mapswithme/api-android/tree/master/sample-app-capitals "Api Source Code"
-[linkSampleGooglePlay]: http://play.google.com/store/apps/details?id=com.mapswithme.capitals "Api Demo .apk"
-[linkTravelGuides]: http://www.guidewithme.com
+[linkApiClass]: lib/src/app/organicmaps/api/Api.java "Api.java"
+[linkPointClass]: lib/src/app/organicmaps/api/Point.java "Point.java"
+[linkRespClass]: lib/src/app/organicmaps/api/Response.java  "Response.java"
+[linkSampleSource]: https://github.com/organicmaps/api-android/tree/master/sample-app-capitals "Api Source Code"
