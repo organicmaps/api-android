@@ -30,9 +30,8 @@ You don't need any additional permissions in your AndroidManifest.xml to use API
 ## Classes Overview and HOW TO
 Core classes you will work with are:
 
-* [app.organicmaps.api.Api][linkApiClass] - static class with methods such as `showPointOnMap(Activity, double, double, String)` etc.
 * [app.organicmaps.api.Point][linkPointClass] - model of POI, includes lat, lon, name, id, and style data.
-* [app.organicmaps.api.Response][linkRespClass] - helps you to extract response from Organic Maps by applying `Response.extractFromIntent(Intent)` to Intent. Contains Point data.
+* [app.organicmaps.api.PickPointResponse][linkRespClass] - helps you to extract response from Organic Maps by applying `Response.extractFromIntent(Intent)` to Intent. Contains Point data.
 
 ### Show Points on the Map
 
@@ -161,5 +160,5 @@ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND 
 [linkIntents]: http://developer.android.com/guide/components/intents-filters.html "Intents and Intent Filters"
 [linkApiClass]: lib/src/app/organicmaps/api/Api.java "Api.java"
 [linkPointClass]: lib/src/app/organicmaps/api/Point.java "Point.java"
-[linkRespClass]: lib/src/app/organicmaps/api/Response.java  "Response.java"
+[linkRespClass]: lib/src/app/organicmaps/api/PickPointResponse.java  "PickPointResponse.java"
 [linkSampleSource]: https://github.com/organicmaps/api-android/tree/master/sample-app-capitals "Api Source Code"

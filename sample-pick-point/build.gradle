@@ -6,7 +6,7 @@ android {
   compileSdk 32
 
   defaultConfig {
-    applicationId "app.organicmaps.api.sample.capitals"
+    applicationId "app.organicmaps.api.sample.pick_point"
     minSdk 21
     targetSdk 32
     versionCode 1
@@ -26,8 +26,6 @@ android {
 }
 
 dependencies {
-
-  implementation 'androidx.appcompat:appcompat:1.4.2'
   implementation 'com.google.android.material:material:1.6.1'
   implementation project(path: ':lib')
 }

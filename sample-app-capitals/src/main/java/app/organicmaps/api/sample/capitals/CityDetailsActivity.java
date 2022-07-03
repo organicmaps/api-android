@@ -24,21 +24,20 @@
 package app.organicmaps.api.sample.capitals;
 
 import android.app.Activity;
-import android.app.PendingIntent;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
-import android.view.View.OnClickListener;
 import android.widget.TextView;
 
-import app.organicmaps.api.Response;
-import app.organicmaps.api.Api;
+import androidx.annotation.NonNull;
+
+import app.organicmaps.api.PickPointResponse;
+import app.organicmaps.api.Point;
+import app.organicmaps.api.MapRequest;
 
 public class CityDetailsActivity extends Activity
 {
-  public static String EXTRA_FROM_ORGANICMAPS = "from-organicmaps";
-
+  private static final int REQ_CODE_CITY = 1;
+  public static String EXTRA_POINT = "point";
   private TextView mName;
   private TextView mAltNames;
   private TextView mCountry;
@@ -51,13 +50,6 @@ public class CityDetailsActivity extends Activity
   private TextView mTimeZone;
 
   private City mCity;
-
-  public static PendingIntent getPendingIntent(Context context)
-  {
-    final Intent i = new Intent(context, CityDetailsActivity.class);
-    i.putExtra(EXTRA_FROM_ORGANICMAPS, true);
-    return PendingIntent.getActivity(context, 0, i, PendingIntent.FLAG_IMMUTABLE);
-  }
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -76,48 +68,48 @@ public class CityDetailsActivity extends Activity
     mPopulation = (TextView) findViewById(R.id.population);
     mTimeZone = (TextView) findViewById(R.id.timeZone);
 
-    findViewById(R.id.showOnMap).setOnClickListener(new OnClickListener()
-    {
-      @Override
-      public void onClick(View v)
-      {
-        Api.showPointsOnMap(CityDetailsActivity.this,mCity.getName(),
-                           CityDetailsActivity.getPendingIntent(CityDetailsActivity.this),mCity.toPoint());
-      }
+    findViewById(R.id.showOnMap).setOnClickListener(v -> {
+      final Intent intent = new MapRequest()
+          .addPoint(mCity.toPoint())
+          .setTitle(getString(R.string.app_name))
+          .toIntent();
+      startActivityForResult(intent, REQ_CODE_CITY);
     });
 
-    handleIntent(getIntent());
+    final Intent data = getIntent().getParcelableExtra(EXTRA_POINT);
+    handleResponse(data);
+  }
+
+  private void handleResponse(final @NonNull Intent data)
+  {
+    final PickPointResponse response = PickPointResponse.extractFromIntent(data);
+    final Point point = response.getPoint();
+    mCity = City.fromPoint(point);
+
+    if (mCity != null)
+    {
+      mName.setText(mCity.getName());
+      mAltNames.setText(mCity.getAltNames());
+      mCountry.setText(mCity.getCountryCode());
+
+      mLat.setText(mCity.getLat() + "");
+      mLon.setText(mCity.getLon() + "");
+      final String evel = mCity.getElevation() != -9999 ? String.valueOf(mCity.getElevation()) : "No Data";
+      mElev.setText(evel);
+
+      final String popul = mCity.getPopulation() != -1 ? String.valueOf(mCity.getPopulation()) : "No Data";
+      mPopulation.setText(popul);
+      mTimeZone.setText(mCity.getTimeZone());
+    }
   }
 
   @Override
-  protected void onNewIntent(Intent intent)
+  protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
-    super.onNewIntent(intent);
-    handleIntent(intent);
-  }
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
+      return;
 
-  private void handleIntent(Intent intent)
-  {
-    if (intent.getBooleanExtra(EXTRA_FROM_ORGANICMAPS, false))
-    {
-      final Response response = Response.extractFromIntent(this, intent);
-      mCity = City.fromPoint(response.getPoint());
-
-      if (mCity != null)
-      {
-        mName.setText(mCity.getName());
-        mAltNames.setText(mCity.getAltNames());
-        mCountry.setText(mCity.getCountryCode());
-
-        mLat.setText(mCity.getLat() + "");
-        mLon.setText(mCity.getLon() + "");
-        final String evel = mCity.getElevation() != -9999 ? String.valueOf(mCity.getElevation()) : "No Data";
-        mElev.setText(evel);
-
-        final String popul = mCity.getPopulation() != -1 ? String.valueOf(mCity.getPopulation()) : "No Data";
-        mPopulation.setText(popul);
-        mTimeZone.setText(mCity.getTimeZone());
-      }
-    }
+    handleResponse(data);
   }
 }
