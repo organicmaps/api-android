@@ -65,9 +65,9 @@ public class CapitalsListActivity extends ListActivity
 
   private void showCityOnOMMap(City ... cities)
   {
-    ArrayList<Point> points = new ArrayList<>(cities.length);
-    for (int i = 0; i < cities.length; i++)
-      points.add(cities[i].toPoint());
+    final ArrayList<Point> points = new ArrayList<>(cities.length);
+    for (City city : cities)
+      points.add(city.toPoint());
 
     final String title = cities.length == 1 ? cities[0].getName() : "Capitals of the World";
     final Intent intent = new MapRequest()
@@ -84,7 +84,7 @@ public class CapitalsListActivity extends ListActivity
     if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
       return;
 
-    Intent intent = new Intent(this, CityDetailsActivity.class);
+    final Intent intent = new Intent(this, CityDetailsActivity.class);
     intent.putExtra(CityDetailsActivity.EXTRA_POINT, data);
   }
 

@@ -55,9 +55,8 @@ public class City
     this.altNames = altNames;
   }
 
-  @Override
-  public String toString()     { return name; }
-  public Point toPoint() { return new Point(lat, lon, name, id); }
+  public String toString()       { return name; }
+  public Point toPoint()         { return new Point(lat, lon, name, id); }
 
   public String getId()          { return id; }
   public String getName()        { return name; }
