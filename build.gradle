@@ -4,6 +4,13 @@ plugins {
   id 'com.android.library' version '7.2.1' apply false
 }
 
+project.ext {
+  minSdkVersion = 21
+  targetSdkVersion = 31
+  buildToolsVersion = '32.0.0'
+  javaVersion = JavaVersion.VERSION_11
+}
+
 task clean(type: Delete) {
   delete rootProject.buildDir
 }
