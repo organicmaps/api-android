@@ -92,13 +92,13 @@ public class CityDetailsActivity extends Activity
       mAltNames.setText(mCity.getAltNames());
       mCountry.setText(mCity.getCountryCode());
 
-      mLat.setText(mCity.getLat() + "");
-      mLon.setText(mCity.getLon() + "");
-      final String evel = mCity.getElevation() != -9999 ? String.valueOf(mCity.getElevation()) : "No Data";
-      mElev.setText(evel);
+      mLat.setText(String.valueOf(mCity.getLat()));
+      mLon.setText(String.valueOf(mCity.getLon()));
+      final String level = mCity.getElevation() != -9999 ? String.valueOf(mCity.getElevation()) : "No Data";
+      mElev.setText(level);
 
-      final String popul = mCity.getPopulation() != -1 ? String.valueOf(mCity.getPopulation()) : "No Data";
-      mPopulation.setText(popul);
+      final String population = mCity.getPopulation() != -1 ? String.valueOf(mCity.getPopulation()) : "No Data";
+      mPopulation.setText(population);
       mTimeZone.setText(mCity.getTimeZone());
     }
   }

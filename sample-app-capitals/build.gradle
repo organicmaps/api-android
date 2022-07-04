@@ -3,12 +3,13 @@ plugins {
 }
 
 android {
-  compileSdk 32
+  compileSdk project.targetSdkVersion
 
   defaultConfig {
     applicationId "app.organicmaps.api.sample.capitals"
-    minSdk 21
-    targetSdk 32
+    minSdk project.minSdkVersion
+    targetSdk project.targetSdkVersion
+    buildToolsVersion project.buildToolsVersion
     versionCode 1
     versionName "1.0"
   }
@@ -20,13 +21,12 @@ android {
     }
   }
   compileOptions {
-    sourceCompatibility JavaVersion.VERSION_1_8
-    targetCompatibility JavaVersion.VERSION_1_8
+    sourceCompatibility project.javaVersion
+    targetCompatibility project.javaVersion
   }
 }
 
 dependencies {
-
   implementation 'androidx.appcompat:appcompat:1.4.2'
   implementation 'com.google.android.material:material:1.6.1'
   implementation project(path: ':lib')
