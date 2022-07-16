@@ -1,0 +1,6 @@
+<resources>
+  <string name="app_name">Pick Point Sample</string>
+  <string name="pick_point">Pick Point</string>
+  <string name="result">Result: lat=%1$.4f lon=%2$.4f id=%3$s name=%4$s zoomLevel=%5$.2f</string>
+  <string name="cancelled">Cancelled</string>
+</resources>

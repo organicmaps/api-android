@@ -22,22 +22,34 @@
  */
 package app.organicmaps.api;
 
-public class Const
+import android.content.Intent;
+import android.net.Uri;
+
+import androidx.annotation.NonNull;
+
+public class CrosshairRequest
 {
-  // Common
-  static final String API_SCHEME = "om://";
-  static final String AUTHORITY = "app.organicmaps.api";
-  static final String EXTRA_PREFIX = AUTHORITY + ".extra";
+  private String mAppName;
 
-  // Request extras
-  public static final String EXTRA_PICK_POINT = EXTRA_PREFIX + ".PICK_POINT";
+  public CrosshairRequest setAppName(String appName)
+  {
+    mAppName = appName;
+    return this;
+  }
 
-  // Response extras
-  public static final String EXTRA_POINT_NAME = EXTRA_PREFIX + ".POINT_NAME";
-  public static final String EXTRA_POINT_LAT = EXTRA_PREFIX + ".POINT_LAT";
-  public static final String EXTRA_POINT_LON = EXTRA_PREFIX + ".POINT_LON";
-  public static final String EXTRA_POINT_ID = EXTRA_PREFIX + ".POINT_ID";
-  public static final String EXTRA_ZOOM_LEVEL = EXTRA_PREFIX + ".ZOOM_LEVEL";
+  public @NonNull
+  Intent toIntent()
+  {
+    final StringBuilder builder = new StringBuilder(Const.API_SCHEME);
+    builder.append("crosshair?");
 
-  private Const() {}
+    // title
+    if (mAppName != null)
+      builder.append("appname").append("=").append(Uri.encode(mAppName)).append("&");
+
+    final Uri uri = Uri.parse(builder.toString());
+    final Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+    intent.putExtra(Const.EXTRA_PICK_POINT, true);
+    return intent;
+  }
 }

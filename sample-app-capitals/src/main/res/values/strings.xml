@@ -12,5 +12,6 @@
     <string name="population">Population:</string>
     <string name="time_zone">Time Zone:</string>
     <string name="elevation">Elevation:</string>
+    <string name="cancelled">Cancelled</string>
 
 </resources>
