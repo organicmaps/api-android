@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
  Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
@@ -20,7 +20,7 @@
  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
- ******************************************************************************/
+ */
 package app.organicmaps.api.sample.capitals;
 
 import app.organicmaps.api.Point;

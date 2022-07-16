@@ -1,6 +1,5 @@
-/******************************************************************************
+/*
  Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
- Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -20,59 +19,57 @@
  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
- ******************************************************************************/
+ */
 package app.organicmaps.api;
 
-import android.content.Context;
 import android.content.Intent;
+import android.os.Bundle;
 
-public class Response
+public class PickPointResponse
 {
-  private final static double INVALID_LL = Double.MIN_VALUE;
   private Point mPoint;
   private double mZoomLevel;
 
-  private Response() {}
+  private PickPointResponse() {}
 
   /**
-   * Factory method to extract response data from intent.
+   * Factory method to extract response from intent.
    *
-   * @param context
-   * @param intent
-   * @return
+   * @param intent an intent to extra data from
+   * @return PointResponse
    */
-  public static Response extractFromIntent(Context context, Intent intent)
+  public static PickPointResponse extractFromIntent(final Intent intent)
   {
-    final Response response = new Response();
-    // parse point
-    final double lat = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_POINT_LAT, INVALID_LL);
-    final double lon = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_POINT_LON, INVALID_LL);
-    final String name = intent.getStringExtra(Const.EXTRA_OM_RESPONSE_POINT_NAME);
-    final String id = intent.getStringExtra(Const.EXTRA_OM_RESPONSE_POINT_ID);
-
-    // parse additional info
-    response.mZoomLevel = intent.getDoubleExtra(Const.EXTRA_OM_RESPONSE_ZOOM, 9);
-
-    if (lat != INVALID_LL && lon != INVALID_LL)
-      response.mPoint = new Point(lat, lon, name, id);
-    else
-      response.mPoint = null;
-
+    final PickPointResponse response = new PickPointResponse();
+    final Bundle extras = intent.getExtras();
+    final double lat = extras.getDouble(Const.EXTRA_POINT_LAT);
+    final double lon = extras.getDouble(Const.EXTRA_POINT_LON);
+    final String name = extras.getString(Const.EXTRA_POINT_NAME);
+    final String id = extras.getString(Const.EXTRA_POINT_ID);
+    response.mPoint = new Point(lat, lon, name, id);
+    response.mZoomLevel = extras.getDouble(Const.EXTRA_ZOOM_LEVEL);
     return response;
   }
 
   /**
-   * @return point, for which user requested more information in Organic Maps application.
+   * @return selected point
    */
-  public Point getPoint() {return mPoint;}
+  public Point getPoint()
+  {
+    return mPoint;
+  }
 
-  public boolean hasPoint() {return mPoint != null;}
-
-  public double getZoomLevel() {return mZoomLevel;}
+  /**
+   * @return current zoom level
+   */
+  public double getZoomLevel()
+  {
+    return mZoomLevel;
+  }
 
   @Override
   public String toString()
   {
-    return "Response [SelectedPoint=" + mPoint + "]";
+    return "PointResponse [Point=" + mPoint + "]";
   }
 }

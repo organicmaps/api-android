@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
  Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
@@ -20,10 +20,13 @@
  CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
  IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
- ******************************************************************************/
+ */
 package app.organicmaps.api;
 
+import androidx.annotation.NonNull;
+
 import java.io.Serializable;
+import java.util.Objects;
 
 /**
  * POI wrapper object.
@@ -53,15 +56,6 @@ public final class Point implements Serializable
     this.mId = id;
   }
 
-  public Point(double lat, double lon, String name, String id, Style style)
-  {
-    this.mLat = lat;
-    this.mLon = lon;
-    this.mName = name;
-    this.mId = id;
-    this.mStyle = style;
-  }
-
   public double getLat() {return mLat;}
 
   public double getLon() {return mLon;}
@@ -74,7 +68,7 @@ public final class Point implements Serializable
    * Sets string ID for this point. Internally it is not used to distinguish point,
    * it's purpose to help clients code to associate point with domain objects of their application.
    *
-   * @param id
+   * @param id point id
    */
   public void setId(String id) {mId = id;}
 
@@ -90,9 +84,8 @@ public final class Point implements Serializable
     this.mStyle = style;
   }
 
-  public String getStyleForUrl() {return (mStyle == null) ? null : mStyle.getName();}
-
   @Override
+  @NonNull
   public String toString()
   {
     return "OMPoint [lat=" + mLat +
@@ -135,8 +128,9 @@ public final class Point implements Serializable
     if (Double.doubleToLongBits(mLon) != Double.doubleToLongBits(other.mLon))
       return false;
 
-    return mName == null ? other.mName == null : mName.equals(other.mName);
+    return Objects.equals(mName, other.mName);
   }
+
 
   /**
    * Supported styles for Organic Maps. Each appears as a small flag of the appropriate colour.
@@ -171,7 +165,7 @@ public final class Point implements Serializable
     /**
      * @return name as it should appear in the MAPS.ME URL.
      */
-    private String getName()
+    public String getName()
     {
       return name;
     }

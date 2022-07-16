@@ -1,4 +1,4 @@
-/******************************************************************************
+/*
   Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
   Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
@@ -20,24 +20,28 @@
   CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING
   IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
   OF SUCH DAMAGE.
-******************************************************************************/
+  */
 package app.organicmaps.api.sample.capitals;
 
 import android.app.ListActivity;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import app.organicmaps.api.Point;
-import app.organicmaps.api.Api;
+import app.organicmaps.api.MapRequest;
+
+import java.util.ArrayList;
 
 public class CapitalsListActivity extends ListActivity
 {
+  private static final int REQ_CODE_CITY = 1;
+
   CityAdapter mCityAdapter;
 
   @Override
@@ -61,12 +65,27 @@ public class CapitalsListActivity extends ListActivity
 
   private void showCityOnOMMap(City ... cities)
   {
-    Point[] points = new Point[cities.length];
+    ArrayList<Point> points = new ArrayList<>(cities.length);
     for (int i = 0; i < cities.length; i++)
-      points[i] = cities[i].toPoint();
+      points.add(cities[i].toPoint());
 
     final String title = cities.length == 1 ? cities[0].getName() : "Capitals of the World";
-    Api.showPointsOnMap(this, title, CityDetailsActivity.getPendingIntent(this), points);
+    final Intent intent = new MapRequest()
+        .setPoints(points)
+        .setAppName(title)
+        .toIntent();
+    this.startActivityForResult(intent, REQ_CODE_CITY);
+  }
+
+  @Override
+  protected void onActivityResult(int requestCode, int resultCode, Intent data)
+  {
+    super.onActivityResult(requestCode, resultCode, data);
+    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
+      return;
+
+    Intent intent = new Intent(this, CityDetailsActivity.class);
+    intent.putExtra(CityDetailsActivity.EXTRA_POINT, data);
   }
 
   private static class CityAdapter extends ArrayAdapter<City>
