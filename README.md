@@ -14,6 +14,8 @@ using Organic Maps to show points of interest (POI) and providing more informati
 
 Please refer to [sample application][linkSampleSource] for demo.
 
+**Note**: this library provides convenience wrappers for [deep links](https://omaps.app/api). Your application can also use deep links directly without including the library as a dependency. You can look at the library implementation for ideas on how to do that.
+
 ## Prerequisites
 
 It is supposed that you are familiar with Android Development.
