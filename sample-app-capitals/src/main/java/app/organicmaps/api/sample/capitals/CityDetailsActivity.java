@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2022-2023, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -57,16 +57,16 @@ public class CityDetailsActivity extends Activity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.city_details_activity);
 
-    mName = (TextView) findViewById(R.id.name);
-    mAltNames = (TextView) findViewById(R.id.altNames);
-    mCountry = (TextView) findViewById(R.id.cCode);
+    mName = findViewById(R.id.name);
+    mAltNames = findViewById(R.id.altNames);
+    mCountry = findViewById(R.id.cCode);
 
-    mLat = (TextView) findViewById(R.id.lat);
-    mLon = (TextView) findViewById(R.id.lon);
-    mElev = (TextView) findViewById(R.id.elevation);
+    mLat = findViewById(R.id.lat);
+    mLon = findViewById(R.id.lon);
+    mElev = findViewById(R.id.elevation);
 
-    mPopulation = (TextView) findViewById(R.id.population);
-    mTimeZone = (TextView) findViewById(R.id.timeZone);
+    mPopulation = findViewById(R.id.population);
+    mTimeZone = findViewById(R.id.timeZone);
 
     findViewById(R.id.showOnMap).setOnClickListener(v -> {
       final Intent intent = new MapRequest()

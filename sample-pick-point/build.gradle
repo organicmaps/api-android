@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+  namespace 'app.organicmaps.api.sample.pick_point'
   compileSdk project.targetSdkVersion
 
   defaultConfig {
@@ -26,7 +27,11 @@ android {
   }
 }
 
+tasks.withType(JavaCompile) {
+  options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+}
+
 dependencies {
-  implementation 'com.google.android.material:material:1.6.1'
+  implementation 'com.google.android.material:material:1.8.0'
   implementation project(path: ':lib')
 }

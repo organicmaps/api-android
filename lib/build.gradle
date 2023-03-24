@@ -3,6 +3,7 @@ plugins {
 }
 
 android {
+  namespace 'app.organicmaps.api'
   compileSdk project.targetSdkVersion
 
   defaultConfig {
@@ -25,8 +26,11 @@ android {
   }
 }
 
-dependencies {
+tasks.withType(JavaCompile) {
+  options.compilerArgs << '-Xlint:unchecked' << '-Xlint:deprecation'
+}
 
-  implementation 'androidx.appcompat:appcompat:1.4.2'
-  implementation 'com.google.android.material:material:1.6.1'
+dependencies {
+  implementation 'androidx.appcompat:appcompat:1.6.1'
+  implementation 'com.google.android.material:material:1.8.0'
 }
