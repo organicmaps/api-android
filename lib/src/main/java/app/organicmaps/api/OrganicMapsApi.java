@@ -1,15 +1,13 @@
 package app.organicmaps.api;
 
 import android.app.Activity;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.ActivityInfo;
 
 import java.util.ArrayList;
 
 public class OrganicMapsApi {
-
-    static final String PACKAGE_NAME = "app.organicmaps";
 
     private OrganicMapsApi() {
         // utility class
@@ -31,9 +29,6 @@ public class OrganicMapsApi {
 
     public static void sendRequest(final Activity caller, final Intent intent) {
         if (isOrganicMapsInstalled(caller)) {
-            // Match activity for intent
-            final ActivityInfo aInfo = caller.getPackageManager().resolveActivity(intent, 0).activityInfo;
-            intent.setClassName(aInfo.packageName, aInfo.name);
             caller.startActivity(intent);
         } else {
             new DownloadDialog(caller).show();
@@ -44,8 +39,8 @@ public class OrganicMapsApi {
      * Detects if any version of OrganicMaps is installed on the device
      */
     public static boolean isOrganicMapsInstalled(final Context context) {
-        final Intent i = context.getPackageManager().getLaunchIntentForPackage(PACKAGE_NAME);
-        return i != null;
+        final ComponentName c = new MapRequest().toIntent().resolveActivity(context.getPackageManager());
+        return c != null;
     }
 
 }
