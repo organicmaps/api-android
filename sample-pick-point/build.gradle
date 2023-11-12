@@ -10,7 +10,6 @@ android {
     applicationId "app.organicmaps.api.sample.pick_point"
     minSdk project.minSdkVersion
     targetSdk project.targetSdkVersion
-    buildToolsVersion project.buildToolsVersion
     versionCode 1
     versionName "1.0"
   }
