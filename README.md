@@ -142,7 +142,7 @@ Nothing serious. API library will show simple dialog with gentle offer to downlo
 -------------------------------------------------------------------------------
 ## API Code License
 
-Copyright (c) 2022, Organic Maps OÜ.
+Copyright (c) 2024, Organic Maps OÜ.
 
 Copyright (c) 2019, MY.COM B.V.
 
@@ -158,11 +158,11 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [linkOM]: https://organicmaps.app/ "Organic Maps"
-[linkPIntent]: http://developer.android.com/reference/android/app/PendingIntent.html "PendingIntent"
+[linkPIntent]: https://developer.android.com/reference/android/app/PendingIntent.html "PendingIntent"
 [linkRepo]: https://github.com/organicmaps/api-android "GitHub Repository"
-[linkLibProj]: http://developer.android.com/tools/projects/index.html#LibraryProjects "Android Library Project"
-[linkIntents]: http://developer.android.com/guide/components/intents-filters.html "Intents and Intent Filters"
-[linkApiClass]: lib/src/app/organicmaps/api/Api.java "Api.java"
-[linkPointClass]: lib/src/app/organicmaps/api/Point.java "Point.java"
-[linkRespClass]: lib/src/app/organicmaps/api/PickPointResponse.java  "PickPointResponse.java"
+[linkLibProj]: https://developer.android.com/tools/projects/index.html#LibraryProjects "Android Library Project"
+[linkIntents]: https://developer.android.com/guide/components/intents-filters.html "Intents and Intent Filters"
+[linkApiClass]: lib/src/main/java/app/organicmaps/api/OrganicMapsApi.java "OrganicMapsApi.java"
+[linkPointClass]: lib/src/main/java/app/organicmaps/api/Point.java "Point.java"
+[linkRespClass]: lib/src/main/java/app/organicmaps/api/PickPointResponse.java  "PickPointResponse.java"
 [linkSampleSource]: https://github.com/organicmaps/api-android/tree/master/sample-app-capitals "Api Source Code"
