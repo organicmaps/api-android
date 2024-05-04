@@ -75,7 +75,7 @@ For multiple points use [Point][linkPointClass] class:
 
 We support PendingIntent interaction (just like Android native
 NotificationManager does). You should specify ID for each point to
-distinguish it later, and PentingIntent that Organic Maps will send back to
+distinguish it later, and PendingIntent that Organic Maps will send back to
 your application when user press "More Info" button :
 
     // Here is how to pass points with ID ant PendingIntent
