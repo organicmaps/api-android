@@ -70,6 +70,28 @@ For multiple points use [Point][linkPointClass] class:
       Api.showPointsOnMap(this, "Look at my points, my points are amazing!", points);
     }
 
+### Build a Multi-Stop Route with a Deep Link
+
+The library wraps the point-selection API. Route planning links can be opened
+directly with an Android `Intent`:
+
+    void openDeliveryRoute()
+    {
+      final Uri uri = Uri.parse(
+          "om://v2/dir"
+              + "?origin=52.5200,13.4050"
+              + "&origin_name=Warehouse%20Berlin"
+              + "&destination=52.5163,13.3777"
+              + "&destination_name=Customer"
+              + "&waypoints=52.5304,13.3850|52.5450,13.3920"
+              + "&waypoint_names=Pickup%201|Pickup%202"
+              + "&mode=drive");
+      startActivity(new Intent(Intent.ACTION_VIEW, uri));
+    }
+
+Use `om://v2/nav` instead of `om://v2/dir` to start navigation when the route is
+ready. If `origin` is an explicit coordinate instead of `currentLocation`,
+Organic Maps previews the route first so the user can confirm the start point.
 
 ### Ask Organic Maps to Call my App
 
