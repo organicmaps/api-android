@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -23,21 +23,25 @@
  */
 package app.organicmaps.api.sample.capitals;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import app.organicmaps.api.PickPointResponse;
 import app.organicmaps.api.Point;
 import app.organicmaps.api.MapRequest;
 
-public class CityDetailsActivity extends Activity
+public class CityDetailsActivity extends AppCompatActivity
 {
-  private static final int REQ_CODE_CITY = 1;
-  public static String EXTRA_POINT = "point";
+  public static final String EXTRA_POINT = "point";
   private TextView mName;
   private TextView mAltNames;
   private TextView mCountry;
@@ -51,11 +55,25 @@ public class CityDetailsActivity extends Activity
 
   private City mCity;
 
+  private final ActivityResultLauncher<Intent> mShowOnMap = registerForActivityResult(
+      new ActivityResultContracts.StartActivityForResult(),
+      result -> {
+        if (result.getResultCode() != RESULT_OK || result.getData() == null)
+          return;
+        handleResponse(result.getData());
+      });
+
   @Override
   protected void onCreate(Bundle savedInstanceState)
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.city_details_activity);
+
+    ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+      final Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+      v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+      return WindowInsetsCompat.CONSUMED;
+    });
 
     mName = findViewById(R.id.name);
     mAltNames = findViewById(R.id.altNames);
@@ -72,17 +90,21 @@ public class CityDetailsActivity extends Activity
       final Intent intent = new MapRequest()
           .addPoint(mCity.toPoint())
           .setAppName(getString(R.string.app_name))
+          .setPickPointMode(true)
           .toIntent();
-      startActivityForResult(intent, REQ_CODE_CITY);
+      mShowOnMap.launch(intent);
     });
 
     final Intent data = getIntent().getParcelableExtra(EXTRA_POINT);
-    handleResponse(data);
+    if (data != null)
+      handleResponse(data);
   }
 
   private void handleResponse(final @NonNull Intent data)
   {
     final PickPointResponse response = PickPointResponse.extractFromIntent(data);
+    if (response == null)
+      return;
     final Point point = response.getPoint();
     mCity = City.fromPoint(point);
 
@@ -101,15 +123,5 @@ public class CityDetailsActivity extends Activity
       mPopulation.setText(population);
       mTimeZone.setText(mCity.getTimeZone());
     }
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data)
-  {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
-      return;
-
-    handleResponse(data);
   }
 }

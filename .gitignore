@@ -1,10 +1,17 @@
 *.iml
 .gradle
-/local.properties
-/.idea
+.idea
+local.properties
 .DS_Store
 /build
 /captures
 .externalNativeBuild
 .cxx
-local.properties
+
+# Legacy Eclipse-era trees. Gradle builds only consume src/main/, so these
+# module-root artefacts are leftovers and must not be re-introduced.
+/*/AndroidManifest.xml
+/*/build.xml
+/*/project.properties
+/*/res/
+/*/src/com/

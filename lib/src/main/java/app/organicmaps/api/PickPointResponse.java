@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -25,6 +25,9 @@ package app.organicmaps.api;
 import android.content.Intent;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+
 public class PickPointResponse
 {
   private Point mPoint;
@@ -35,13 +38,15 @@ public class PickPointResponse
   /**
    * Factory method to extract response from intent.
    *
-   * @param intent an intent to extra data from
-   * @return PointResponse
+   * @param intent an intent returned by Organic Maps when the user picked a point
+   * @return parsed response, or {@code null} if {@code intent} has no extras
    */
-  public static PickPointResponse extractFromIntent(final Intent intent)
+  public static @Nullable PickPointResponse extractFromIntent(final @NonNull Intent intent)
   {
-    final PickPointResponse response = new PickPointResponse();
     final Bundle extras = intent.getExtras();
+    if (extras == null)
+      return null;
+    final PickPointResponse response = new PickPointResponse();
     final double lat = extras.getDouble(Const.EXTRA_POINT_LAT);
     final double lon = extras.getDouble(Const.EXTRA_POINT_LON);
     final String name = extras.getString(Const.EXTRA_POINT_NAME);

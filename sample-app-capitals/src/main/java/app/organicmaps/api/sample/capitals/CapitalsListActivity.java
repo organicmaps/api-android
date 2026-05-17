@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+  Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
   Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
@@ -23,7 +23,6 @@
   */
 package app.organicmaps.api.sample.capitals;
 
-import android.app.ListActivity;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -33,16 +32,32 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
+import app.organicmaps.api.Const;
 import app.organicmaps.api.Point;
 import app.organicmaps.api.MapRequest;
 
 import java.util.ArrayList;
 
-public class CapitalsListActivity extends ListActivity
+public class CapitalsListActivity extends AppCompatActivity
 {
-  private static final int REQ_CODE_CITY = 1;
+  private CityAdapter mCityAdapter;
 
-  CityAdapter mCityAdapter;
+  private final ActivityResultLauncher<Intent> mPickCity = registerForActivityResult(
+      new ActivityResultContracts.StartActivityForResult(),
+      result -> {
+        if (result.getResultCode() != RESULT_OK || result.getData() == null)
+          return;
+        final Intent intent = new Intent(this, CityDetailsActivity.class);
+        intent.putExtra(CityDetailsActivity.EXTRA_POINT, result.getData());
+        startActivity(intent);
+      });
 
   @Override
   protected void onCreate(Bundle savedInstanceState)
@@ -50,17 +65,30 @@ public class CapitalsListActivity extends ListActivity
     super.onCreate(savedInstanceState);
     setContentView(R.layout.capitals_list_activity);
 
+    ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+      final Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+      v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+      return WindowInsetsCompat.CONSUMED;
+    });
+
     mCityAdapter = new CityAdapter(this, City.CAPITALS);
-    setListAdapter(mCityAdapter);
+    final ListView list = findViewById(android.R.id.list);
+    list.setAdapter(mCityAdapter);
+    list.setOnItemClickListener((parent, view, position, id) -> showCityOnOMMap(mCityAdapter.getItem(position)));
+    list.setOnItemLongClickListener((parent, view, position, id) -> {
+      final Point p = mCityAdapter.getItem(position).toPoint();
+      final Intent omResult = new Intent()
+          .putExtra(Const.EXTRA_POINT_ID, p.getId())
+          .putExtra(Const.EXTRA_POINT_NAME, p.getName())
+          .putExtra(Const.EXTRA_POINT_LAT, p.getLat())
+          .putExtra(Const.EXTRA_POINT_LON, p.getLon());
+      final Intent intent = new Intent(this, CityDetailsActivity.class);
+      intent.putExtra(CityDetailsActivity.EXTRA_POINT, omResult);
+      startActivity(intent);
+      return true;
+    });
 
     findViewById(R.id.btn_all).setOnClickListener(v -> showCityOnOMMap(City.CAPITALS));
-  }
-
-
-  @Override
-  protected void onListItemClick(ListView l, View v, int position, long id)
-  {
-    showCityOnOMMap(mCityAdapter.getItem(position));
   }
 
   private void showCityOnOMMap(City ... cities)
@@ -73,19 +101,9 @@ public class CapitalsListActivity extends ListActivity
     final Intent intent = new MapRequest()
         .setPoints(points)
         .setAppName(title)
+        .setPickPointMode(true)
         .toIntent();
-    this.startActivityForResult(intent, REQ_CODE_CITY);
-  }
-
-  @Override
-  protected void onActivityResult(int requestCode, int resultCode, Intent data)
-  {
-    super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
-      return;
-
-    final Intent intent = new Intent(this, CityDetailsActivity.class);
-    intent.putExtra(CityDetailsActivity.EXTRA_POINT, data);
+    mPickCity.launch(intent);
   }
 
   private static class CityAdapter extends ArrayAdapter<City>

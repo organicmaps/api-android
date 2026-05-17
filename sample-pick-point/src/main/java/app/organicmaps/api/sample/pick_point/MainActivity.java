@@ -1,5 +1,5 @@
 /******************************************************************************
- Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
  are permitted provided that the following conditions are met:
@@ -30,6 +30,9 @@ import android.widget.Toast;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 
 import app.organicmaps.api.CrosshairRequest;
 import app.organicmaps.api.DownloadDialog;
@@ -43,6 +46,12 @@ public class MainActivity extends AppCompatActivity
   {
     super.onCreate(savedInstanceState);
     setContentView(R.layout.activity_main);
+
+    ViewCompat.setOnApplyWindowInsetsListener(findViewById(android.R.id.content), (v, insets) -> {
+      final Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars() | WindowInsetsCompat.Type.displayCutout());
+      v.setPadding(bars.left, bars.top, bars.right, bars.bottom);
+      return WindowInsetsCompat.CONSUMED;
+    });
 
     final ActivityResultLauncher<Intent> pickPoint = registerForActivityResult(
         new ActivityResultContracts.StartActivityForResult(),
