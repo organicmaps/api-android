@@ -1,6 +1,6 @@
 # Organic Maps Android API
 
-A thin Java library that wraps the [Organic Maps deep-link API](https://omaps.app/api) so your app can:
+A thin Java library that wraps the [Organic Maps deep-link API](https://omaps.app/api) so your app (Java or Kotlin) can:
 
 * show one or more points of interest on the offline map in [Organic Maps][linkOM];
 * let the user pick a point on that map and receive its coordinates back via [Activity Result][linkActivityResult];
@@ -42,6 +42,8 @@ The two samples in this repo are good starting points:
 
 ## Show points on the map
 
+**Java**
+
 ```java
 // Single point — title defaults to the point name.
 OrganicMapsApi.showPointOnMap(this, lat, lon, "Eiffel Tower");
@@ -53,11 +55,25 @@ for (SomeDomainObject obj : list)
 OrganicMapsApi.showPointsOnMap(this, "Capitals of the World", points);
 ```
 
+**Kotlin**
+
+```kotlin
+// Single point — title defaults to the point name.
+OrganicMapsApi.showPointOnMap(this, lat, lon, "Eiffel Tower")
+
+// Multiple points with a custom title. showPointsOnMap takes ArrayList<Point>,
+// so mapTo(ArrayList()) instead of plain map { ... }.
+val points = list.mapTo(ArrayList(list.size)) { Point(it.lat, it.lon, it.name) }
+OrganicMapsApi.showPointsOnMap(this, "Capitals of the World", points)
+```
+
 If Organic Maps is not installed, the library shows a download dialog instead of crashing.
 
 ## Round-trip: let the user pick a point
 
-Register an `ActivityResultLauncher` and launch a `MapRequest` (or `CrosshairRequest`) with pick-point mode enabled:
+Register an `ActivityResultLauncher` and launch a `MapRequest` (or `CrosshairRequest`) with pick-point mode enabled.
+
+**Java**
 
 ```java
 private final ActivityResultLauncher<Intent> pickPoint = registerForActivityResult(
@@ -94,7 +110,49 @@ void launchPicker(List<MyPoi> pois)
 }
 ```
 
-For a free-form pick (no candidate points) use `CrosshairRequest` instead — see [`sample-pick-point/MainActivity`][linkPickPointMain].
+**Kotlin**
+
+Java getters are exposed as Kotlin properties: `response.point`, `point.id`, `response.zoomLevel`.
+
+```kotlin
+private val pickPoint = registerForActivityResult(
+    ActivityResultContracts.StartActivityForResult()
+) { result ->
+    if (result.resultCode != RESULT_OK) return@registerForActivityResult
+    val data = result.data ?: return@registerForActivityResult
+    val response = PickPointResponse.extractFromIntent(data) ?: return@registerForActivityResult
+    val point = response.point
+    // point.id lets you map the result back to your domain object.
+    onUserPicked(point, response.zoomLevel)
+}
+
+private fun launchPicker(pois: List<MyPoi>) {
+    val points = pois.mapTo(ArrayList(pois.size)) {
+        Point(it.lat, it.lon, it.name, it.id)
+    }
+
+    val intent = MapRequest()
+        .setAppName(getString(R.string.app_name))
+        .setPoints(points)
+        .setPickPointMode(true)        // ask OM to send the picked point back
+        .toIntent()
+
+    if (!OrganicMapsApi.canHandleOrganicMapsIntents(this)) {
+        DownloadDialog(this).show()
+        return
+    }
+    pickPoint.launch(intent)
+}
+```
+
+For a free-form pick (no candidate points) use `CrosshairRequest` instead — see [`sample-pick-point/MainActivity`][linkPickPointMain]:
+
+```kotlin
+val intent = CrosshairRequest()
+    .setAppName(getString(R.string.app_name))
+    .toIntent()
+pickPoint.launch(intent)
+```
 
 ## FAQ
 
