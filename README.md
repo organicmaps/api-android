@@ -1,156 +1,124 @@
-# Organic Maps Android API: Getting Started
+# Organic Maps Android API
 
-## Introduction
+A thin Java library that wraps the [Organic Maps deep-link API](https://omaps.app/api) so your app can:
 
-Organic Maps Android API (hereinafter referred to as *"API Library"* or just *"library"*)
-provides interface for client application to perform next tasks:
+* show one or more points of interest on the offline map in [Organic Maps][linkOM];
+* let the user pick a point on that map and receive its coordinates back via [Activity Result][linkActivityResult];
+* brand the map screen with your app's name as a title.
 
-* Show one or more points on offline map of [Organic Maps app][linkOM]
-* Come back to the client application after selecting specific point on the map, by sending [PendingIntent][linkPIntent] with point data when user asks for more information by pressing "More Info" button in Organic Maps app
-* Map screen branding : your application's icon and name (or custom title) will be placed at the top.
+Two-way communication between your app and Organic Maps lets you use OM as the map UI while keeping the user's tap inside your own activity stack.
 
-Thus, you can provide **two way communication between your application and Organic Maps**,
-using Organic Maps to show points of interest (POI) and providing more information in your app.
-
-Please refer to [sample application][linkSampleSource] for demo.
-
-**Note**: this library provides convenience wrappers for [deep links](https://omaps.app/api). Your application can also use deep links directly without including the library as a dependency. You can look at the library implementation for ideas on how to do that.
+> The library is convenience over [deep links](https://omaps.app/api). You can also build the `om://` URIs yourself; read [`MapRequest.java`][linkMapRequest] / [`CrosshairRequest.java`][linkCrosshair] for the format.
 
 ## Prerequisites
 
-It is supposed that you are familiar with Android Development.
-You should be familiar with concept of [Intents][linkIntents], [library projects][linkLibProj], and [PendingIntents][linkPIntent] (recommended) as well.
+* Familiarity with Android development, [Intents][linkIntents], and the [Activity Result APIs][linkActivityResult].
+* Organic Maps runs on Android 5 (SDK 21) and above.
 
-Organic Maps works from *Android SDK version 21 (Android 5)* and above
+## Setup
 
-## Integration
-First step is to clone [repository][linkRepo] or download it as an archive.
+Clone the repo and add `:lib` as a Gradle module of your project — or build the AAR yourself:
 
-When your are done you find two folders: *lib* and *sample-app-capitals*. First one is a library project that you should add to your project.
-You don't need any additional permissions in your AndroidManifest.xml to use API library, so you can write real code straight away, calling for different `Api` methods (more details below).
+```bash
+./gradlew :lib:assembleRelease   # produces lib/build/outputs/aar/lib-release.aar
+```
 
-## Classes Overview and HOW TO
-Core classes you will work with are:
+No additional permissions are required in your `AndroidManifest.xml`.
 
-* [app.organicmaps.api.Point][linkPointClass] - model of POI, includes lat, lon, name, id, and style data.
-* [app.organicmaps.api.PickPointResponse][linkRespClass] - helps you to extract response from Organic Maps by applying `Response.extractFromIntent(Intent)` to Intent. Contains Point data.
+The two samples in this repo are good starting points:
 
-### Show Points on the Map
+| Module                  | Demonstrates                                                      |
+|-------------------------|-------------------------------------------------------------------|
+| `:sample-app-capitals`  | Show many points and round-trip the user's pick back to your app. |
+| `:sample-pick-point`    | Crosshair pick using the modern `ActivityResultLauncher` flow.    |
 
-The simplest usage:
+## Core classes
 
-    public class MyPerfectActivity extends Activity {
-    ...
+* [`OrganicMapsApi`][linkApiClass] — entry point with `showPointOnMap` / `showPointsOnMap` / `sendRequest` helpers and `canHandleOrganicMapsIntents` / `isOrganicMapsPackageInstalled` probes.
+* [`MapRequest`][linkMapRequest] — fluent builder for `om://map?…` intents. Call `setPickPointMode(true)` to ask OM to return the picked point.
+* [`CrosshairRequest`][linkCrosshair] — fluent builder for `om://crosshair?…` intents (always pick-point).
+* [`Point`][linkPointClass] — POI model: `lat`, `lon`, `name`, optional `id`, optional `Style`.
+* [`PickPointResponse`][linkRespClass] — parses the result intent into a `Point` plus the zoom level.
 
-      void showSomethingOnTheMap(SomeDomainObject arg)
-      {
-        // Do some work, create lat, lon, and name for point
-        final double lat = ...;
-        final double lon = ...;
-        final String name = ...;
-        // Ask Organic Maps to show the point
-        Api.showPointOnMap(this, lat, lon, name);
-      }
-    ...
+## Show points on the map
 
-    }
+```java
+// Single point — title defaults to the point name.
+OrganicMapsApi.showPointOnMap(this, lat, lon, "Eiffel Tower");
 
-For multiple points use [Point][linkPointClass] class:
+// Multiple points with a custom title.
+final ArrayList<Point> points = new ArrayList<>();
+for (SomeDomainObject obj : list)
+  points.add(new Point(obj.lat, obj.lon, obj.name));
+OrganicMapsApi.showPointsOnMap(this, "Capitals of the World", points);
+```
 
-    void showMultiplePoints(List<SomeDomainObject> list)
-    {
-      // Convert objects to OM Points
-      final Point[] points = new Point[list.length];
-      for (int i = 0; i < list.size; i++)
-      {
-        // Get lat, lon, and name from object and assign it to new Point
-        points[i] = new Point(lat, lon, name);
-      }
-      // Show all point on the map, you could also provide some title
-      Api.showPointsOnMap(this, "Look at my points, my points are amazing!", points);
-    }
+If Organic Maps is not installed, the library shows a download dialog instead of crashing.
 
+## Round-trip: let the user pick a point
 
-### Ask Organic Maps to Call my App
+Register an `ActivityResultLauncher` and launch a `MapRequest` (or `CrosshairRequest`) with pick-point mode enabled:
 
-We support PendingIntent interaction (just like Android native
-NotificationManager does). You should specify ID for each point to
-distinguish it later, and PendingIntent that Organic Maps will send back to
-your application when user press "More Info" button :
+```java
+private final ActivityResultLauncher<Intent> pickPoint = registerForActivityResult(
+    new ActivityResultContracts.StartActivityForResult(),
+    result -> {
+      if (result.getResultCode() != RESULT_OK || result.getData() == null)
+        return;
+      final PickPointResponse response = PickPointResponse.extractFromIntent(result.getData());
+      if (response == null)
+        return;
+      final Point point = response.getPoint();
+      // point.getId() lets you map the result back to your domain object.
+      onUserPicked(point, response.getZoomLevel());
+    });
 
-    // Here is how to pass points with ID ant PendingIntent
-    void showMultiplePointsWithPendingIntent(List<SomeDomainObject> list, PendingIntent pendingIntent)
-    {
-      // Convert objects to Points
-      final Point[] points = new Point[list.length];
-      for (int i = 0; i < list.size; i++)
-      {
-        //                                      ||
-        //                                      ||
-        //                                      \/
-        //         Now you should specify string ID for each point
-        points[i] = new Point(lat, lon, name, id);
-      }
-      // Show all points on the map, you could also provide some title
-      Api.showPointsOnMap(this, "This title says that user should choose some point", pendingIntent, points);
-    }
+void launchPicker(List<MyPoi> pois)
+{
+  final ArrayList<Point> points = new ArrayList<>(pois.size());
+  for (MyPoi poi : pois)
+    points.add(new Point(poi.lat, poi.lon, poi.name, poi.id));
 
-    //Code below shows general way to extract response data
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        // Handle intent you specified with PandingIntent
-        // Now it has additional information (Point).
-        handleIntent(getIntent());
-    }
+  final Intent intent = new MapRequest()
+      .setAppName(getString(R.string.app_name))
+      .setPoints(points)
+      .setPickPointMode(true)        // ask OM to send the picked point back
+      .toIntent();
 
-    @Override
-    protected void onNewIntent(Intent intent)
-    {
-      super.onNewIntent(intent);
-      // if defined your activity as "SingleTop"- you should use onNewIntent callback
-      handleIntent(intent);
-    }
+  if (!OrganicMapsApi.canHandleOrganicMapsIntents(this))
+  {
+    new DownloadDialog(this).show();
+    return;
+  }
+  pickPoint.launch(intent);
+}
+```
 
-    void handleIntent(Intent intent)
-    {
-      // Apply Response extraction method to intent
-      final Response mwmResponse = Response.extractFromIntent(this, intent);
-      // Here is your point that user selected
-      final Point point = mwmResponse.getPoint();
-      // Now, for instance you can do some work depending on point id
-      processUserInteraction(point.getId());
-    }
+For a free-form pick (no candidate points) use `CrosshairRequest` instead — see [`sample-pick-point/MainActivity`][linkPickPointMain].
 
 ## FAQ
 
-#### Which versions of Organic Maps support API calls?
+#### Which versions of Organic Maps support this API?
 
-All versions since 2022-07-26 and above support API calls.
+All versions since 2022-07-26.
 
-#### What will happen if I call for `Api.showPoint()` but Organic Maps application is not installed?
+#### What happens if Organic Maps is not installed?
 
-Nothing serious. API library will show simple dialog with gentle offer to download Organic Maps. You can see how it looks like below.
+`OrganicMapsApi.sendRequest` (and the manual flow above) falls back to `DownloadDialog`, which links to <https://omaps.app/get?api>.
 
-![Please install us](site/images/dlg.png)
+#### Can I check beforehand whether Organic Maps will handle the intent?
 
-## Sample Code and Application
+Yes — `OrganicMapsApi.canHandleOrganicMapsIntents(context)` does a `resolveActivity`. `OrganicMapsApi.isOrganicMapsPackageInstalled(context)` checks for the known package IDs (`app.organicmaps`, `.beta`, `.debug`, `.web`).
 
-* [Sample Application Source Code][linkSampleSource]
+## License
 
--------------------------------------------------------------------------------
-## API Code License
-
-Copyright (c) 2024, Organic Maps OÜ.
+Copyright (c) 2026, Organic Maps OÜ.
 
 Copyright (c) 2019, MY.COM B.V.
 
 Copyright (c) 2013, MapsWithMe GmbH.
 
-All rights reserved.
-
-Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
+All rights reserved. Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
 
 * Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
 * Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
@@ -158,11 +126,11 @@ Redistribution and use in source and binary forms, with or without modification,
 THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 [linkOM]: https://organicmaps.app/ "Organic Maps"
-[linkPIntent]: https://developer.android.com/reference/android/app/PendingIntent.html "PendingIntent"
-[linkRepo]: https://github.com/organicmaps/api-android "GitHub Repository"
-[linkLibProj]: https://developer.android.com/tools/projects/index.html#LibraryProjects "Android Library Project"
-[linkIntents]: https://developer.android.com/guide/components/intents-filters.html "Intents and Intent Filters"
+[linkIntents]: https://developer.android.com/guide/components/intents-filters "Intents and Intent Filters"
+[linkActivityResult]: https://developer.android.com/training/basics/intents/result "Getting a result from an activity"
 [linkApiClass]: lib/src/main/java/app/organicmaps/api/OrganicMapsApi.java "OrganicMapsApi.java"
+[linkMapRequest]: lib/src/main/java/app/organicmaps/api/MapRequest.java "MapRequest.java"
+[linkCrosshair]: lib/src/main/java/app/organicmaps/api/CrosshairRequest.java "CrosshairRequest.java"
 [linkPointClass]: lib/src/main/java/app/organicmaps/api/Point.java "Point.java"
-[linkRespClass]: lib/src/main/java/app/organicmaps/api/PickPointResponse.java  "PickPointResponse.java"
-[linkSampleSource]: https://github.com/organicmaps/api-android/tree/master/sample-app-capitals "Api Source Code"
+[linkRespClass]: lib/src/main/java/app/organicmaps/api/PickPointResponse.java "PickPointResponse.java"
+[linkPickPointMain]: sample-pick-point/src/main/java/app/organicmaps/api/sample/pick_point/MainActivity.java "sample-pick-point MainActivity.java"

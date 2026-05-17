@@ -1,5 +1,5 @@
 /*
-  Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+  Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
   Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
   Redistribution and use in source and binary forms, with or without modification,
@@ -73,6 +73,7 @@ public class CapitalsListActivity extends ListActivity
     final Intent intent = new MapRequest()
         .setPoints(points)
         .setAppName(title)
+        .setPickPointMode(true)
         .toIntent();
     this.startActivityForResult(intent, REQ_CODE_CITY);
   }
@@ -81,11 +82,12 @@ public class CapitalsListActivity extends ListActivity
   protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
+    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK || data == null)
       return;
 
     final Intent intent = new Intent(this, CityDetailsActivity.class);
     intent.putExtra(CityDetailsActivity.EXTRA_POINT, data);
+    startActivity(intent);
   }
 
   private static class CityAdapter extends ArrayAdapter<City>

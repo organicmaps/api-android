@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022-2023, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
@@ -37,7 +37,7 @@ import app.organicmaps.api.MapRequest;
 public class CityDetailsActivity extends Activity
 {
   private static final int REQ_CODE_CITY = 1;
-  public static String EXTRA_POINT = "point";
+  public static final String EXTRA_POINT = "point";
   private TextView mName;
   private TextView mAltNames;
   private TextView mCountry;
@@ -72,17 +72,21 @@ public class CityDetailsActivity extends Activity
       final Intent intent = new MapRequest()
           .addPoint(mCity.toPoint())
           .setAppName(getString(R.string.app_name))
+          .setPickPointMode(true)
           .toIntent();
       startActivityForResult(intent, REQ_CODE_CITY);
     });
 
     final Intent data = getIntent().getParcelableExtra(EXTRA_POINT);
-    handleResponse(data);
+    if (data != null)
+      handleResponse(data);
   }
 
   private void handleResponse(final @NonNull Intent data)
   {
     final PickPointResponse response = PickPointResponse.extractFromIntent(data);
+    if (response == null)
+      return;
     final Point point = response.getPoint();
     mCity = City.fromPoint(point);
 
@@ -107,7 +111,7 @@ public class CityDetailsActivity extends Activity
   protected void onActivityResult(int requestCode, int resultCode, Intent data)
   {
     super.onActivityResult(requestCode, resultCode, data);
-    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK)
+    if (requestCode != REQ_CODE_CITY || resultCode != RESULT_OK || data == null)
       return;
 
     handleResponse(data);
