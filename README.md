@@ -69,6 +69,48 @@ OrganicMapsApi.showPointsOnMap(this, "Capitals of the World", points)
 
 If Organic Maps is not installed, the library shows a download dialog instead of crashing.
 
+## Build a multi-stop route with a deep link
+
+The library wraps the point-selection API. Route planning links can be opened
+directly with an `Intent`:
+
+**Java**
+
+```java
+void openDeliveryRoute()
+{
+  final Uri uri = Uri.parse(
+      "om://v2/dir"
+          + "?origin=52.5200,13.4050"
+          + "&origin_name=Warehouse%20Berlin"
+          + "&destination=52.5163,13.3777"
+          + "&destination_name=Customer"
+          + "&waypoints=52.5304,13.3850|52.5450,13.3920"
+          + "&waypoint_names=Pickup%201|Pickup%202"
+          + "&mode=drive");
+  startActivity(new Intent(Intent.ACTION_VIEW, uri));
+}
+```
+
+**Kotlin**
+
+```kotlin
+val uri = Uri.parse(
+    "om://v2/dir"
+        + "?origin=52.5200,13.4050"
+        + "&origin_name=Warehouse%20Berlin"
+        + "&destination=52.5163,13.3777"
+        + "&destination_name=Customer"
+        + "&waypoints=52.5304,13.3850|52.5450,13.3920"
+        + "&waypoint_names=Pickup%201|Pickup%202"
+        + "&mode=drive")
+startActivity(Intent(Intent.ACTION_VIEW, uri))
+```
+
+Use `om://v2/nav` instead of `om://v2/dir` to start navigation when the route is
+ready. If `origin` is an explicit coordinate instead of `currentLocation`,
+Organic Maps previews the route first so the user can confirm the start point.
+
 ## Round-trip: let the user pick a point
 
 Register an `ActivityResultLauncher` and launch a `MapRequest` (or `CrosshairRequest`) with pick-point mode enabled.
