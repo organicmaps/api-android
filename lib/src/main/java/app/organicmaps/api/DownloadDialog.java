@@ -1,5 +1,5 @@
 /*
- Copyright (c) 2022, Organic Maps OÜ. All rights reserved.
+ Copyright (c) 2026, Organic Maps OÜ. All rights reserved.
  Copyright (c) 2013, MapsWithMe GmbH. All rights reserved.
 
  Redistribution and use in source and binary forms, with or without modification,
